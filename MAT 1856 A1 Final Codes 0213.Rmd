@@ -1,0 +1,369 @@
+---
+title: "MAT1856A1 Code"
+author: "Siqi Zheng"
+date: "1/28/2024"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    keep_tex: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message=F)
+```
+
+## Library Prepartion
+
+```{r library}
+library(tidyverse)
+library(jrvFinance)
+library(lubridate)
+```
+
+## Yield Curve
+
+```{r load-data}
+bond_data_raw <- read.csv("bonds.csv")
+bond_data_raw$coupon <- bond_data_raw$coupon*0.01
+#ytm empty matrix initialization
+ytm <- matrix(nrow = 10,ncol = 10)
+#column names to dates
+colnames(ytm)<- c("2024-01-08","2024-01-09","2024-01-10", "2024-01-11", "2024-01-12", "2024-01-15", "2024-01-16","2024-01-17", "2024-01-18", "2024-01-19")
+bond_data_raw$year_difference <- as.numeric(interval(as.Date("2024-01-08"), bond_data_raw$maturity.date) / dyears(1))
+bond_data_raw$year_difference
+```
+
+```{r ytm-10-days}
+#ytm at 2024.01.08
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.8[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_08=bond.yield("2024-01-08", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,1] =  ytm_08
+}
+#ytm at 2024.01.09
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.9[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_09=bond.yield("2024-01-09", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,2] =  ytm_09
+}
+#ytm at 2024.01.10
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.10[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_10=bond.yield("2024-01-10", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,3] =  ytm_10
+}
+#ytm at 2024.01.11
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.11[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_11=bond.yield("2024-01-11", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,4] =  ytm_11
+}
+#ytm at 2024.01.12
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.12[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_12=bond.yield("2024-01-12", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,5] =  ytm_12
+}
+#ytm at 2024.01.15
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.15[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_15=bond.yield("2024-01-15", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,6] =  ytm_15
+}
+#ytm at 2024.01.16
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.16[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_16=bond.yield("2024-01-16", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,7] =  ytm_16
+}
+#ytm at 2024.01.17
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.17[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_17=bond.yield("2024-01-17", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,8] =  ytm_17
+}
+#ytm at 2024.01.18
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.18[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_18=bond.yield("2024-01-18", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,9] =  ytm_18
+}
+#ytm at 2024.01.19
+for (i in 1:10) {
+  coupon = bond_data_raw$coupon[i]
+  bond_value = bond_data_raw$X2024.1.19[i]
+  maturity_date = bond_data_raw$maturity.date[i]
+  ytm_19=bond.yield("2024-01-19", maturity_date, coupon = coupon , freq = 2, bond_value, comp.freq = 2, redemption_value = 100)
+  ytm[i,10] =  ytm_19
+}
+```
+
+
+```{r yield-curve, fig.asp=0.5}
+#plot yield curve
+xlim_range <- seq(0.5,5,0.5)
+
+plot(xlim_range,ytm[,1],type="l", col=1,xlab="Time to Maturity (Years)",ylab="Yield to Maturity", 
+     main = "5-Year Yield Curve Based on 10-day Data",ylim=c(0.03,0.052))
+for (i in seq(2,10)){
+  lines(xlim_range,ytm[,i], col=i)
+}
+# par(xpd=TRUE)
+legend("topright",legend = c("2024-01-08","2024-01-09","2024-01-10", "2024-01-11", "2024-01-12", "2024-01-15", "2024-01-16","2024-01-17", "2024-01-18", "2024-01-19"),
+       lty=c(1,1), lwd=c(2,2), cex=0.7, col=1:10, ncol=2)
+```
+
+## Spot Curve
+
+```{r spot-rate1}
+#Divide coupon rate by 2(semi-annual)
+coupon <- bond_data_raw$coupon / 2
+#Create a data frame only storing 10 bonds' bond_data_raw of each date
+bond_value <- data.frame(bond_data_raw[,c(5:14)])
+#TTM
+ttm = time_length(difftime(bond_data_raw$maturity.date, as.Date("2024-01-08")), "years")
+
+# Function to calculate spot rates iteratively
+calculate_spot_rates <- function(r1, C, FF, P, ttm, n) {
+  spot_rates111 <- rep(NA, n)
+  spot_rates111[1] <- r1
+   
+  for (i in 2:n) {
+    pv = 0
+    k = i-1
+    for (j in seq(1:k)){
+    pv <- pv + C[j] / (1 + spot_rates111[j])^(ttm[j])
+    }
+    root_function <- function(x, P,pv, C, FF, ttm) {
+
+  return(P-(pv + ((C+FF) / (1 + x)^ttm)))
+    }
+    y = uniroot(f = root_function, interval = c(0,1), P=P[i],pv=pv, C=C[i], FF=FF[i], ttm=ttm[i])$root
+
+    spot_rates111[i] <- y
+  }
+  
+  return(spot_rates111)
+}
+spot_rates222 <-matrix(ncol = 10, nrow = 10)
+#for loop with i_th date
+for (i in 1:10) {
+  r1 = ((100*coupon[1] + 100)/bond_data_raw[1,i+4])^(1/ttm[1])-1
+  # print(r1)
+  spot_rates222[,i] <- calculate_spot_rates(r1, 100*coupon, 100+100*coupon, bond_data_raw[,i+4], ttm, 10)
+}
+spot_rate = spot_rates222
+```
+
+
+```{r spot-curve,  fig.asp=0.5}
+#plot spot curve
+xlim_range <- seq(0.5,5,0.5)
+plot(xlim_range,spot_rate[,1],type="l", col=1,xlab="Time to Maturity (Years)",ylab="Spot Rate", ylim = c(0.02,0.12),
+     main =" 5-Year Spot Curve Based on 10-day Data")
+for (i in seq(2,10)) {
+  lines(xlim_range,spot_rate[,i], col=i)
+}
+legend("topright",legend = c("2024-01-08","2024-01-09","2024-01-10", "2024-01-11", "2024-01-12", "2024-01-15", "2024-01-16","2024-01-17", "2024-01-18", "2024-01-19"),
+       lty=c(1,1), lwd=c(2,2), cex=0.7, col=1:10, ncol=2)
+
+```
+
+## Forward Curve
+
+```{r forward-rate-continuous-whole-year-only, eval=F}
+forward_rate <- matrix(ncol = 10, nrow = 4)
+# create a loop for each date.
+for (i in 1:10) {
+  # refer to the spots rate of i_th date and r1 is r_1 in the formula.
+  sportRate <- spot_rate[, i]
+  r1 <- sportRate[2]
+  # create a vector storing forward rate for each bond on the i_th date.
+  f <- c()
+  #we only interest 1yr-1yr,...,1yr-4yr forward rate
+  for (j in 2:5) {
+    forward <- (sportRate[j*2]*j - r1)/(j - 1)
+    f[j - 1] <- forward
+  }
+
+  forward_rate[,i] <- f
+}
+forward_rate
+```
+
+```{r forward-rate-continuous-all, eval=F}
+n_plus_t = seq(2,5,by=.5)
+t = seq(1,4,by=.5)
+forward_rate <- matrix(ncol = 10, nrow = 7)
+# create a loop for each date.
+for (i in 1:10) {
+  # refer to the spots rate of i_th date and r1 is r_1 in the formula.
+  sportRate <- spot_rate[, i]
+  r1 <- sportRate[2]
+  # create a vector storing forward rate for each bond on the i_th date.
+  f <- c()
+  #we only interest 1yr-1yr,...,1yr-4yr forward rate
+  for (j in 4:10) {
+    forward <- (sportRate[j]*n_plus_t[j-3] - r1)/(t[j-3])
+    f <- c(f,forward)
+  }
+
+  forward_rate[,i] <- f
+}
+forward_rate
+```
+
+```{r forward-rate-discrete-whole-year-only, eval=F}
+forward_rate <- matrix(ncol = 10, nrow = 4)
+# create a loop for each date.
+for (i in 1:10) {
+  # refer to the spots rate of i_th date and r1 is r_1 in the formula.
+  sportRate <- spot_rate[, i]
+  r1 <- sportRate[2]
+  # create a vector storing forward rate for each bond on the i_th date.
+  f <- c()
+  #we only interest 1yr-1yr,...,1yr-4yr forward rate
+  for (j in 2:5) {
+    forward <- ((sportRate[j*2]+1)^((2*j))/(1+r1)^2)^(1/(2*(j-1))) - 1
+    f[j - 1] <- forward
+  }
+
+  forward_rate[,i] <- f
+}
+forward_rate
+```
+
+```{r forward-rate-discrete-all, eval=T}
+n_plus_t = seq(2,5,by=.5)
+t = seq(1,4,by=.5)
+forward_rate <- matrix(ncol = 10, nrow = 7)
+# create a loop for each date.
+for (i in 1:10) {
+  # refer to the spots rate of i_th date and r1 is r_1 in the formula.
+  sportRate <- spot_rate[, i]
+  r1 <- sportRate[2]
+  # create a vector storing forward rate for each bond on the i_th date.
+  f <- c()
+  #we only interest 1yr-1yr,...,1yr-4yr forward rate
+  for (j in 4:10) {
+    forward <- ((sportRate[j]+1)^((2*n_plus_t[j-3]))/(1+r1)^2)^(1/(2*t[j-3])) - 1
+    f <- c(f,forward)
+  }
+
+  forward_rate[,i] <- f
+}
+forward_rate
+```
+
+```{r forward-curve, fig.asp=0.5}
+#plot forward curve
+xlim_range <-c(1,1.5,2,2.5,3,3.5,4)
+# xlim_range <-c(1,2,3,4)
+plot(xlim_range,forward_rate[,1],type="l", col=1,ylim = c(0.0,0.05),xlab="Time to Maturity (Years)",ylab="Forward Rate", 
+     main =" Forward Curve Based on 10-day Data",xaxt='n')
+for (i in seq(2,10)){
+  lines(xlim_range,forward_rate[,i], col=i)
+}
+legend("topright",legend = c("2024-01-08","2024-01-09","2024-01-10", "2024-01-11", "2024-01-12", "2024-01-15", "2024-01-16","2024-01-17", "2024-01-18", "2024-01-19"),
+       lty=c(1,1), lwd=c(2,2), col=1:10, ncol=2,cex=0.6)
+axis(side=1,at=c(1,2,3,4),labels=c("1yr-1yr","1yr-2yr","1yr-3yr","1yr-4yr"))
+
+```
+
+## Covariance Matrix
+
+```{r matrix-to-latex}
+matrix2latex <- function(matr) {
+
+printmrow <- function(x) {
+
+    cat(cat(x,sep=" & ")," \\\\ \n")
+}
+
+cat("\\begin{bmatrix}","\n")
+body <- apply(matr,1,printmrow)
+cat("\\end{bmatrix}")
+}
+```
+
+```{r covariance-yield}
+yield <- matrix(ncol = 5, nrow = 9)
+for (i in 1:9){
+  yield[i,1]<-log(ytm[2,i+1]/ytm[2,i])
+  yield[i,2]<-log(ytm[4,i+1]/ytm[4,i])
+  yield[i,3]<-log(ytm[6,i+1]/ytm[6,i])
+  yield[i,4]<-log(ytm[8,i+1]/ytm[8,i])
+  yield[i,5]<-log(ytm[10,i+1]/ytm[10,i])
+}
+covyield = cov(yield)
+matrix2latex(round(covyield*10^5,3))
+```
+
+```{r covariance-forward-rate}
+forw <- matrix(ncol = 4, nrow = 9)
+forward_rate = forward_rate[c(1,3,5,7),]
+for (i in 1:9){
+  forw[i,1]<-log(forward_rate[1,i+1]/forward_rate[1,i])
+  forw[i,2]<-log(forward_rate[2,i+1]/forward_rate[2,i])
+  forw[i,3]<-log(forward_rate[3,i+1]/forward_rate[3,i])
+  forw[i,4]<-log(forward_rate[4,i+1]/forward_rate[4,i])
+}
+covforw = cov(forw)
+matrix2latex(round(covforw*10^4,3))
+```
+## Eigendecomposition of Covariance Matrix
+
+```{r matrix-to-latex-table}
+matrix2latextable <- function(matr) {
+
+printmrow <- function(x) {
+
+    cat(cat(x,sep=" & "),"\\\\ \n")
+}
+
+cat("\\begin{table}[h]","\n","\\centering","\n","\\begin{tabular}","\n")
+body <- apply(matr,1,printmrow)
+cat("\\end{tabular}","\n","\\end{table}")
+}
+```
+
+
+```{r cov-yield-pca}
+covyield_eigen_decompo <- eigen(covyield)
+covyield_eigen_decompo$values
+covyield_eigen_decompo$vectors
+```
+```{r cov-yield-pca-latex}
+matrix2latex(round(t(as.matrix(covyield_eigen_decompo$values))*10^5,3))
+matrix2latex(round(t(as.matrix(covyield_eigen_decompo$values))/sum(covyield_eigen_decompo$values)*100,3))
+matrix2latextable(round(covyield_eigen_decompo$vectors,3))
+```
+```{r cov-forward-pca}
+covforw_eigen_decompo <- eigen(covforw)
+covforw_eigen_decompo$values
+covforw_eigen_decompo$vectors
+```
+
+```{r cov-forward-pca-latex}
+matrix2latextable(round(t(as.matrix(covforw_eigen_decompo$values))*10^5,3))
+matrix2latextable(round(t(as.matrix(covforw_eigen_decompo$values))/sum(covforw_eigen_decompo$values)*100,3))
+matrix2latextable(round(covforw_eigen_decompo$vectors,3))
+```
